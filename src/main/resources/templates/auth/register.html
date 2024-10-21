@@ -72,8 +72,8 @@
 <div class="register-container">
     <h1>Đăng Ký</h1>
 
-    <!-- Form đăng ký -->
     <form th:action="@{/auth/register}" method="post">
+        <input type="text" name="name" placeholder="Tên" required> <!-- Thêm trường nhập tên -->
         <input type="text" name="username" placeholder="Tên người dùng" required>
         <input type="text" name="email" placeholder="Email" required>
         <input type="password" name="password" placeholder="Mật Khẩu" required>
@@ -82,6 +82,7 @@
         <input type="text" name="phone" placeholder="Số điện thoại">
         <button type="submit">Đăng Ký</button>
     </form>
+
 
     </form>
 

@@ -16,9 +16,15 @@ public class UserService {
     private PasswordEncoder passwordEncoder; // Tiêm PasswordEncoder
 
     public void registerUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword())); // Mã hóa mật khẩu
-        userRepository.save(user); // Lưu người dùng vào cơ sở dữ liệu
+        try {
+            user.setPassword(passwordEncoder.encode(user.getPassword())); // Mã hóa mật khẩu
+            userRepository.save(user); // Lưu người dùng vào cơ sở dữ liệu
+            System.out.println("Người dùng đã được lưu thành công.");
+        } catch (Exception e) {
+            System.err.println("Lỗi khi lưu người dùng: " + e.getMessage());
+        }
     }
+
 
 
 }

@@ -36,6 +36,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ModelAndView registerUser(
+            @RequestParam("name") String name,
             @RequestParam("username") String username,
             @RequestParam("email") String email,
             @RequestParam("password") String password,
@@ -59,6 +60,7 @@ public class AuthController {
 
         // Tạo người dùng mới
         User user = new User();
+        user.setName(name);
         user.setUsername(username);
         user.setEmail(email);
         user.setPassword(password); // Đặt mật khẩu chưa mã hóa ở đây
