@@ -16,6 +16,9 @@ public class User {
     @Column(nullable = false, length = 50)
     private String name;
 
+    @Column(nullable = false, unique = true, length = 50)
+    private String username;
+
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
@@ -34,6 +37,15 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
 
     public User() {
@@ -76,6 +88,13 @@ public class User {
         this.name = name;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
     public String getEmail() {
         return email;
     }
@@ -118,6 +137,20 @@ public class User {
     }
 
 
+
+
+    public void setOrders(Set<BookOrder> orders) {
+        this.orders = orders;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
 
 
 

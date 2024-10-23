@@ -1,34 +1,25 @@
 package org.example.case_modul4.controller;
 
-import org.example.case_modul4.model.Author;
-import org.example.case_modul4.model.Book;
-import org.example.case_modul4.model.Category;
-import org.example.case_modul4.service.AuthorService;
-import org.example.case_modul4.service.BookService;
-import org.example.case_modul4.service.CategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+
+import org.springframework.web.bind.annotation.GetMapping;
+
+
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+
+@PreAuthorize("hasRole('ADMIN')")
 @Controller
 public class AdminController {
-
-    @Autowired
-    private BookService bookService;
-
-    @Autowired
-    private CategoryService categoryService;
-    @Autowired
-    private AuthorService authorService;
-
     @GetMapping("/admin")
-    public String adminPage(Model model) {
-        List<Book> books = bookService.getAllBooks();
-        model.addAttribute("books", books);
+    public String adminPage() {
         return "Admin/admin";
     }
+
+
 
     @PostMapping("/deleteBook/{id}")
     public String deleteBook(@PathVariable("id") int id) {
