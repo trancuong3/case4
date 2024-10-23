@@ -1,33 +1,30 @@
 package org.example.case_modul4.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "order_detail")
-public class OrderDetail {
+
+@Table(name = "cart_items")
+public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false)
-    private BookOrder bookOrder;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_id", nullable = false)
+    private Cart cart;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-    @Column(nullable = false)
-    private Integer price;
-
-    @Column(nullable = false)
     private Integer quantity;
+
+    private BigDecimal price;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -35,16 +32,14 @@ public class OrderDetail {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public OrderDetail() {
+    public CartItem() {
     }
 
-    public OrderDetail(BookOrder bookOrder, Book book, Integer price, Integer quantity) {
-        this.bookOrder = bookOrder;
+    public CartItem(Book book, Integer quantity, BigDecimal price) {
         this.book = book;
-        this.price = price;
         this.quantity = quantity;
+        this.price = price;
     }
-
 
     @PrePersist
     protected void onCreate() {
@@ -65,13 +60,12 @@ public class OrderDetail {
         this.id = id;
     }
 
-
-    public BookOrder getBookOrder() {
-        return bookOrder;
+    public Cart getCart() {
+        return cart;
     }
 
-    public void setBookOrder(BookOrder bookOrder) {
-        this.bookOrder = bookOrder;
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 
     public Book getBook() {
@@ -82,14 +76,6 @@ public class OrderDetail {
         this.book = book;
     }
 
-    public Integer getPrice() {
-        return price;
-    }
-
-    public void setPrice(Integer price) {
-        this.price = price;
-    }
-
     public Integer getQuantity() {
         return quantity;
     }
@@ -98,13 +84,23 @@ public class OrderDetail {
         this.quantity = quantity;
     }
 
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
-
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
+    public BigDecimal calculateTotalPrice() {
+        return price.multiply(BigDecimal.valueOf(quantity));
+    }
 }
