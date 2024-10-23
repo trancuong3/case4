@@ -2,7 +2,13 @@ package org.example.case_modul4.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+
 import org.springframework.web.bind.annotation.GetMapping;
+
+
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 
 @PreAuthorize("hasRole('ADMIN')")
@@ -12,4 +18,91 @@ public class AdminController {
     public String adminPage() {
         return "Admin/admin";
     }
+
+
+
+    @PostMapping("/deleteBook/{id}")
+    public String deleteBook(@PathVariable("id") int id) {
+        bookService.deleteBookById(id);
+        return "redirect:/admin";
+    }
+
+    @GetMapping("/editProduct/{id}")
+    public String editProduct(@PathVariable int id, Model model) {
+        System.out.println("ID received: " + id);
+        Book book = bookService.findById(id);
+
+        if (book == null) {
+            System.out.println("Book not found for ID: " + id);
+            return "redirect:/404";
+        }
+
+        System.out.println("Book found: " + book);
+        model.addAttribute("book", book);
+        return "Admin/editProduct";
+    }
+
+    @PostMapping("/updateProduct")
+    public String updateProduct(@ModelAttribute("book") Book book) {
+        String categoryName = book.getCategory().getCategoryName();
+        if (categoryName != null && !categoryName.isEmpty()) {
+            Category category = categoryService.findByName(categoryName);
+            if (category != null) {
+                book.setCategory(category);
+            } else {
+                throw new IllegalArgumentException("Category cannot be null");
+            }
+        }
+
+        bookService.updateBook(book);
+        return "redirect:/admin";
+    }
+
+
+
+
+    @GetMapping("/addProduct")
+    public String showAddProductForm(Model model) {
+        List<Author> authors = authorService.getAllAuthors();
+        List<Category> categories = categoryService.getAllCategories();
+
+        model.addAttribute("authors", authors);
+        model.addAttribute("categories", categories);
+
+        return "Admin/addProduct";
+    }
+
+
+    @PostMapping("/saveBook")
+    public String saveBook(@RequestParam("title") String title,
+                           @RequestParam("author") int authorId,
+                           @RequestParam("category") int categoryId,
+                           @RequestParam("price") int price,
+                           @RequestParam("quantity") int quantity,
+                           @RequestParam("imageUrl") String imageUrl) {
+
+        Author author = authorService.findById(authorId);
+        Category category = categoryService.findById(categoryId);
+        if (author == null) {
+            return "redirect:/addBook?error=authorNotFound";
+        }
+        if (category == null) {
+            return "redirect:/addBook?error=categoryNotFound";
+        }
+
+        Book book = new Book();
+        book.setTitle(title);
+        book.setAuthor(author);
+        book.setCategory(category);
+        book.setPrice(price);
+        book.setQuantity(quantity);
+        book.setCoverImage(imageUrl);
+        book.setFavorite(false);
+        bookService.saveBook(book);
+
+        return "redirect:/admin";
+    }
+
+
+
 }
