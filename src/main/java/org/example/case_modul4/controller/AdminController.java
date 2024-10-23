@@ -1,15 +1,11 @@
 package org.example.case_modul4.controller;
 
-import org.example.case_modul4.model.Book;
-import org.example.case_modul4.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.List;
 
+@PreAuthorize("hasRole('ADMIN')")
 @Controller
 public class AdminController {
     @GetMapping("/admin")

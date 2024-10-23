@@ -25,16 +25,14 @@ public class Book {
 
     @Column(name = "old_price")
     private Integer oldPrice;
-
     @Column(name = "buy_turn")
     private Integer buyTurn;
 
     private Integer quantity;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id", nullable = false)
     private Category category;
-
     @ManyToOne
     @JoinColumn(name = "author_id")
     private Author author;
@@ -74,7 +72,6 @@ public class Book {
     }
 
 
-
     public Book(String title, String description, Integer price, Integer oldPrice, Integer buyTurn,
                 Integer quantity, Category category, Author author, String coverImage) {
         this.title = title;
@@ -87,6 +84,7 @@ public class Book {
         this.author = author;
         this.coverImage = coverImage;
     }
+
 
     @PrePersist
     protected void onCreate() {

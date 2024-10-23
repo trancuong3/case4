@@ -6,11 +6,14 @@ import org.example.case_modul4.service.UserService; // Nhập UserService
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/auth")
@@ -74,4 +77,11 @@ public class AuthController {
         modelAndView.setViewName("redirect:/auth/login");
         return modelAndView;
     }
+    @GetMapping("/Users")
+    public String listUsers(Model model) {
+        List<User> users = userService.getAllUsers(); // Lấy danh sách người dùng từ service
+        model.addAttribute("users", users); // Thêm danh sách người dùng vào model
+        return "Admin/users/userList"; // Tên của template HTML
+    }
+
 }

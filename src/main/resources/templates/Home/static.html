@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Trang Chủ Cửa Hàng Sách</title>
@@ -45,16 +46,43 @@
                         <i class="fas fa-tags me-1"></i> Giảm Giá Hàng Tuần
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/login}">
+                <!-- Hiển thị Đăng Nhập và Đăng Ký nếu chưa đăng nhập -->
+                <li class="nav-item" th:if="${#authentication == null or #authentication.name == 'anonymousUser'}">
+                    <a class="nav-link" th:href="@{/auth/login}">
                         <i class="fas fa-sign-in-alt me-1"></i> Đăng Nhập
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/signup}">
+                <li class="nav-item" th:if="${#authentication == null or #authentication.name == 'anonymousUser'}">
+                    <a class="nav-link" th:href="@{/auth/register}">
                         <i class="fas fa-user-plus me-1"></i> Đăng Ký
                     </a>
                 </li>
+
+                <!-- Hiển thị tên người dùng và Đăng xuất nếu đã đăng nhập -->
+                <li class="nav-item dropdown" th:if="${#authentication != null and #authentication.name != 'anonymousUser'}">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user me-1"></i> <span th:text="${#authentication.name}">Tên Người Dùng</span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                        <li>
+                            <a class="dropdown-item" th:href="@{/profile}">
+                                <i class="fas fa-user-circle me-1"></i> Hồ Sơ
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/logout}">
+                                <i class="fas fa-sign-out-alt me-1"></i> Đăng Xuất
+                            </a>
+                        </li>
+                        <li th:if="${#authentication.authorities.?[name].contains('ROLE_ADMIN')}">
+                            <a class="dropdown-item" th:href="@{/admin}">
+                                <i class="fas fa-chart-line me-1"></i> Trang Admin
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/support}">
                         <i class="fas fa-envelope me-1"></i> Hỗ Trợ
@@ -123,7 +151,7 @@
         <div th:each="book : ${books}" class="col-md-3 mb-4">
             <a th:href="@{/books/{id}(id=${book.id})}" class="text-decoration-none text-dark">
                 <div class="card book-card h-100 shadow-sm">
-                    <img th:src="${'/images/' + book.coverImage}" alt="Cover image" class="card-img-top">
+                    <img th:src="${book.coverImage}" alt="Cover image" class="card-img-top">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title" th:text="${book.title}">Tên Sách</h5>
                         <p class="card-text" th:text="${book.author}">Tên Tác Giả</p>
@@ -171,7 +199,7 @@
         </div>
     </div>
     <div class="text-center p-3 bg-dark text-white">
-        © 2023 Cửa Hàng Sách. Bản quyền thuộc về bạn.
+        © 2024 Cửa Hàng Sách
     </div>
 </footer>
 

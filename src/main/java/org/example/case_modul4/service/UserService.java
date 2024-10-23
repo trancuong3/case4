@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -24,6 +26,18 @@ public class UserService {
             System.err.println("Lỗi khi lưu người dùng: " + e.getMessage());
         }
     }
+    public List<User> getAllUsers() {
+        return userRepository.findAll(); // Lấy tất cả người dùng từ cơ sở dữ liệu
+    }
+    // Phương thức xóa người dùng theo ID
+    public void deleteUserById(Integer id) {
+        if (userRepository.existsById(Long.valueOf(id))) {
+            userRepository.deleteById(Long.valueOf(id)); // Xóa người dùng nếu tồn tại
+        } else {
+            throw new RuntimeException("User không tồn tại"); // Ném ngoại lệ nếu không tìm thấy
+        }
+    }
+
 
 
 

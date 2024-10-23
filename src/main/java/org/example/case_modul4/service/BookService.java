@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookService {
@@ -31,6 +32,7 @@ public class BookService {
     public List<Book> getBooksByCategory(Category category) {
         return bookRepository.findByCategory(category);
     }
+
     public Book getBookDetails(int id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Sách không tồn tại"));
@@ -48,6 +50,7 @@ public class BookService {
 
         return bookRepository.findByCategory(category);
     }
+
     public List<String> findGenresByBookId(int categoryId) {
         String sql = "SELECT category_name FROM categories WHERE id = ?";
         List<String> genres = new ArrayList<>();
@@ -64,10 +67,61 @@ public class BookService {
         }
         return genres;
     }
+
     public List<Book> findBooksByTitleContaining(String title) {
         return bookRepository.findByTitleContainingIgnoreCase(title);
     }
 
+    public void deleteBookById(int id) {
+        bookRepository.deleteById(id);
+    }
+
+    public void updateBook(Book book) {
+        if (book.getCategory() == null) {
+            throw new IllegalArgumentException("Category cannot be null");
+        }
+        Optional<Book> existingBookOptional = bookRepository.findById(book.getId());
+        if (existingBookOptional.isPresent()) {
+            Book existingBook = existingBookOptional.get();
+            existingBook.setTitle(book.getTitle());
+            existingBook.setPrice(book.getPrice());
+            existingBook.setQuantity(book.getQuantity());
+            existingBook.setCategory(book.getCategory());
+            existingBook.setCoverImage(book.getCoverImage());
+            bookRepository.save(existingBook);
+        } else {
+            throw new EntityNotFoundException("Book not found with ID: " + book.getId());
+        }
+    }
 
 
+
+    public void saveBook(Book book) {
+        if (book.getCategory() == null) {
+            throw new IllegalArgumentException("Category cannot be null");
+        }
+        bookRepository.save(book);
+    }
+
+    public Book findById(int id) {
+        return bookRepository.findById(id).orElse(null);
+    }
+
+    public void updateProduct(Book updatedBook) {
+        Optional<Book> existingBookOptional = bookRepository.findById(updatedBook.getId());
+        if (existingBookOptional.isPresent()) {
+            Book existingBook = existingBookOptional.get();
+            existingBook.setTitle(updatedBook.getTitle());
+            existingBook.setPrice(updatedBook.getPrice());
+            existingBook.setQuantity(updatedBook.getQuantity());
+            existingBook.setCategory(updatedBook.getCategory());
+            existingBook.setCoverImage(updatedBook.getCoverImage());
+            bookRepository.save(existingBook);
+        } else {
+            throw new RuntimeException("Book not found with ID: " + updatedBook.getId());
+        }
+    }
+    public List<Book> getBooksByAuthor(int authorId) {
+        return bookRepository.findByAuthor_Id(authorId);
+    }
 }

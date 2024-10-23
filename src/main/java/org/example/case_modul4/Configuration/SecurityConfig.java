@@ -38,7 +38,10 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((authz) -> authz
                         .requestMatchers("/auth/login", "/auth/register", "/static").permitAll()  // Cho phép truy cập trang login và register
+
+
                         .requestMatchers("/static/**").permitAll()  // Cho phép mọi người truy cập /static/** mà không cần đăng nhập
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // Bảo vệ trang admin
                         .anyRequest().authenticated()  // Tất cả các yêu cầu khác đều cần xác thực
                 )
                 .formLogin(form -> form
@@ -48,7 +51,13 @@ public class SecurityConfig {
                         .failureUrl("/auth/login?error=true")  // Trang login khi có lỗi xác thực
                         .permitAll()
                 )
-                .logout(logout -> logout.permitAll());
+                .logout(logout -> logout
+                        .permitAll()
+                        .logoutUrl("/auth/logout")
+                        .logoutSuccessUrl("/auth/login")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                );
 
         return http.build();
     }
